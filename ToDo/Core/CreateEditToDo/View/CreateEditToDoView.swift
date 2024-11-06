@@ -79,7 +79,6 @@ struct CreateEditToDoView: View {
 }
 
 #Preview {
-    var todo: ToDo = ToDo(title: "Hello world", done: true)
-    CreateEditToDoView(todo: todo, typeAction: .create)
+    CreateEditToDoView(todo: ToDo(title: "Hello world", done: true), typeAction: .create)
 }
 

@@ -42,13 +42,12 @@ class CreateEditToDoViewModel {
         self.todo = try await ToDoService.shared.fetchToDo(id: id)
     }
     func createToDo() async throws {
-        try await ToDoService.shared.createToDo(title: title, description: description, done: done, dueDate: dueDate)
+        try await ToDoService.shared.createToDo(title: title, description: description, done: done, dueDate: hasDueDate ? dueDate : nil)
     }
     
     func updateToDo() async throws {
         guard let id = todo.id else { return }
-        print("Update to do view model id: \(id)")
-        try await ToDoService.shared.updateToDo(id: id, title: title, description: description, done: done, dueDate: dueDate)
+        try await ToDoService.shared.updateToDo(id: id, title: title, description: description, done: done, dueDate: hasDueDate ? dueDate : nil)
     }
 }
 

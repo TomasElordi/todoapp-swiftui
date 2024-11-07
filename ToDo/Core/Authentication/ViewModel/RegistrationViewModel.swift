@@ -16,7 +16,21 @@ class RegistrationViewModel{
     var fullname: String = ""
     var username: String = ""
     
+    var alert: Bool = false
+    var errorMessage: String?
+    
     func createUser() async throws {
-        try await AuthService.shared.signUp(email: email, password: password, username: username, fullname: fullname)
+        if email.isEmpty || password.isEmpty || username.isEmpty || fullname.isEmpty {
+            alert = true
+            errorMessage = "All fields are required"
+            return
+        }
+        do{
+            try await AuthService.shared.signUp(email: email, password: password, username: username, fullname: fullname)
+        }catch{
+            alert = true
+            errorMessage = error.localizedDescription
+        }
+        
     }
 }

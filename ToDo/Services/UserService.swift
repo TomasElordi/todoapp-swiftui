@@ -19,12 +19,11 @@ class UserService {
     }
     
     func fetchCurrentUser() async throws -> User?{
-        let emailUser = Supabase.client.auth.currentUser?.email
-        let response = try await Supabase.client.from("users").select("*").eq("email",value: emailUser).single().execute()
+        let emailUser = Supabase.anonymousClient.auth.currentUser?.email
+        let response = try await Supabase.anonymousClient.from("users").select("*").eq("email",value: emailUser).single().execute()
         
         let decoder = JSONDecoder()
         if let user = try? decoder.decode(User.self, from: response.data){
-            print("USER: \(user)")
             self.currentUser = user
             return user
         }else{
@@ -35,7 +34,7 @@ class UserService {
     
     func createUser(username: String, email:String, fullname: String) async throws{
         let user = User(username: username, email: email, fullname: fullname)
-        try await Supabase.client.from("users").insert(user).execute()
+        try await Supabase.anonymousClient.from("users").insert(user).execute()
         
         try await fetchCurrentUser()
     }

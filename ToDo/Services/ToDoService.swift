@@ -11,15 +11,10 @@ class ToDoService {
     
     static let shared = ToDoService()
     
-    private let supabase = SupabaseClient(
-        supabaseURL: URL(string: Constants.apiURL)!,
-        supabaseKey: Constants.annonKey
-    )
     
-    
-    func fetchToDos()async throws -> [ToDo] {
+    func fetchToDos() async throws -> [ToDo] {
         do{
-            let todos : [ToDo] = try await supabase.from("todos").select("*").order("due_date", ascending: false).execute().value
+            let todos : [ToDo] = try await Supabase.anonymousClient.from("todos").select("*").order("due_date", ascending: false).execute().value
             return todos
         }catch{
             print("DEBUGLOG: \(error)")
@@ -28,20 +23,31 @@ class ToDoService {
         
     }
     
-    func createToDo(title: String, description: String?, done: Bool?,dueDate: Date?) async throws{
+    func fetchUserToDos(by userId: Int) async throws -> [ToDo] {
         do{
-            let todo : ToDo = ToDo(title: title, description: description, done: done ?? false, dueDate: dueDate)
-            try await supabase.from("todos").insert(todo).execute()
+            let todos : [ToDo] = try await Supabase.anonymousClient.from("todos").select("*").eq("user_id", value: userId).order("due_date", ascending: false).execute().value
+            return todos
+        }catch{
+            print("DEBUGLOG: \(error)")
+            throw error
+        }
+        
+    }
+    
+    func createToDo(title: String, description: String?, done: Bool?,dueDate: Date?, userId: Int) async throws{
+        do{
+            let todo : ToDo = ToDo(title: title, description: description, done: done ?? false, dueDate: dueDate, userId: userId)
+            try await Supabase.anonymousClient.from("todos").insert(todo).execute()
         }catch{
             print("DEBUGLOG: \(error)")
             throw error
         }
     }
     
-    func updateToDo(id: Int,title: String, description: String?, done: Bool?,dueDate: Date?) async throws{
+    func updateToDo(id: Int,title: String, description: String?, done: Bool?,dueDate: Date?, userId: Int) async throws{
         do{
-            let todo : ToDo = ToDo( title: title, description: description, done: done ?? false, dueDate: dueDate)
-            try await supabase.from("todos").update(todo).eq("id", value: "\(id)").execute()
+            let todo : ToDo = ToDo( title: title, description: description, done: done ?? false, dueDate: dueDate, userId: userId)
+            try await Supabase.anonymousClient.from("todos").update(todo).eq("id", value: "\(id)").execute()
         }catch{
             print("DEBUGLOG: \(error)")
             throw error
@@ -50,7 +56,7 @@ class ToDoService {
     
     func fetchToDo(id: Int) async throws -> ToDo{
         do{
-            let todo : ToDo = try await supabase.from("todos").select("*").eq("id", value: "\(id)").execute().value
+            let todo : ToDo = try await Supabase.anonymousClient.from("todos").select("*").eq("id", value: "\(id)").execute().value
             return todo
         }catch{
             print("DEBUGLOG: \(error)")
@@ -60,7 +66,7 @@ class ToDoService {
     
     func deleteToDo(id: Int) async throws{
         do{
-            try await supabase.from("todos").delete().eq("id", value: "\(id)").execute()
+            try await Supabase.anonymousClient.from("todos").delete().eq("id", value: "\(id)").execute()
         }catch{
             print("DEBUGLOG: \(error)")
             throw error

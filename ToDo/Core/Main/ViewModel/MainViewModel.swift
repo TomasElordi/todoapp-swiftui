@@ -15,12 +15,13 @@ class MainViewModel {
     
     init(){
         Task{
-             try await fetchToDos()
+             try await fetchUserToDos()
         }
     }
     
-    func fetchToDos() async throws {
-        self.todos = try await ToDoService.shared.fetchToDos()
+    func fetchUserToDos() async throws {
+        guard let id = UserService.shared.currentUser?.id else { return }
+        self.todos = try await ToDoService.shared.fetchUserToDos(by: id )
     }
     
     func deleteToDo(at offsets: IndexSet) async throws{

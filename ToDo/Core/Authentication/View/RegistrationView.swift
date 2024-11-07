@@ -68,6 +68,8 @@ struct RegistrationView: View {
             }
             
             
+        }.alert(viewModel.errorMessage ?? "", isPresented: $viewModelBindable.alert){
+            Button("OK", role: .cancel){}
         }
     }
 }

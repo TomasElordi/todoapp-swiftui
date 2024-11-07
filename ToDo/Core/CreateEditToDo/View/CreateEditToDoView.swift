@@ -11,8 +11,14 @@ import SwiftUI
 struct CreateEditToDoView: View {
     @State var viewModel: CreateEditToDoViewModel
     @Environment(\.dismiss) var dismiss
-    init(todo: ToDo,typeAction: TypeAction) {
-        self.viewModel = CreateEditToDoViewModel(todo: todo,typeAction:typeAction)
+    init(todo: ToDo?,typeAction: TypeAction) {
+        if typeAction == .create {
+            self.viewModel = CreateEditToDoViewModel(todo: nil, typeAction: typeAction)
+            
+        }else{
+            self.viewModel = CreateEditToDoViewModel(todo: todo,typeAction:typeAction)
+        }
+        
     }
     var body: some View {
         @Bindable var viewModelBindable = viewModel
@@ -54,13 +60,16 @@ struct CreateEditToDoView: View {
                 }
                 Button{
                     Task{
-                        if viewModel.typeAction == .create{
-                            try await viewModel.createToDo()
+                        do{
+                            if viewModel.typeAction == .create{
+                                try await viewModel.createToDo()
+                            }
+                            if viewModel.typeAction == .edit{
+                                try await viewModel.updateToDo()
+                            }
+                            dismiss()
+                        }catch{
                         }
-                        if viewModel.typeAction == .edit{
-                            try await viewModel.updateToDo()
-                        }
-                        dismiss()
                     }
                 }label: {
                     Text("Save")
@@ -74,11 +83,13 @@ struct CreateEditToDoView: View {
                 .fontWeight(.semibold)
                 .font(.title3)
             }
+        }.alert(viewModel.errorMessage ?? "", isPresented: $viewModelBindable.alert){
+            Button("OK",role: .cancel){}
         }
     }
 }
 
 #Preview {
-    CreateEditToDoView(todo: ToDo(title: "Hello world", done: true), typeAction: .create)
+    CreateEditToDoView(todo: ToDo(title: "Hello world", done: true, userId: 2), typeAction: .create)
 }
 

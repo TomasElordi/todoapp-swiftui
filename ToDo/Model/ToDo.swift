@@ -15,6 +15,7 @@ struct ToDo: Codable, Identifiable {
     var description: String?
     var done: Bool
     var dueDate: Date?
+    var userId: Int
     
     enum CodingKeys: String, CodingKey {
         case id
@@ -22,5 +23,6 @@ struct ToDo: Codable, Identifiable {
         case description
         case done
         case dueDate = "due_date"
+        case userId = "user_id"
     }
 }

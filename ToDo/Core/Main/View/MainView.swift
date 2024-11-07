@@ -19,7 +19,7 @@ struct MainView: View {
                         CreateEditToDoView(todo: todo, typeAction: .edit).navigationTitle("Edit ToDo").navigationBarTitleDisplayMode(.inline)
                             .onDisappear{
                                 Task{
-                                    try await viewModel.fetchToDos()
+                                    try await viewModel.fetchUserToDos()
                                 }
                             }
                     },label:{
@@ -28,14 +28,15 @@ struct MainView: View {
                 }
                 .onDelete(perform: {offset in
                     Task{
-                       try await viewModel.deleteToDo(at: offset)
+                        try await viewModel.deleteToDo(at: offset)
+                        try await viewModel.fetchUserToDos()
                     }
                 })
             }
             
             .refreshable {
                 Task{
-                    try await viewModel.fetchToDos()
+                    try await viewModel.fetchUserToDos()
                 }
             }
             
@@ -51,10 +52,10 @@ struct MainView: View {
             }
             .sheet(isPresented: $viewModelBindable.showAddTodo, onDismiss: {
                 Task{
-                    try await viewModel.fetchToDos()
+                    try await viewModel.fetchUserToDos()
                 }
             }, content: {
-                CreateEditToDoView(todo: ToDo(title: "", done: false),typeAction: .create)
+                CreateEditToDoView(todo: nil,typeAction: .create)
             })
             .navigationTitle("To-Do")
         }
@@ -63,5 +64,5 @@ struct MainView: View {
 }
 
 #Preview {
-   MainView()
+    MainView()
 }

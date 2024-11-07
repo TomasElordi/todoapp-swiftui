@@ -32,7 +32,7 @@ class AuthService {
             try await UserService.shared.createUser(username: username, email: email, fullname: fullname)
             self.userSession = authResponse.session
         }catch{
-            print("ERROR: \(error)")
+            throw error
         }
         
     }

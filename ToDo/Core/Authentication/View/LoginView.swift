@@ -73,6 +73,9 @@ struct LoginView: View {
                     .font(.footnote)
                 }
             }
+            .alert(viewModel.errorMessage ?? "", isPresented: $viewModelBindable.alert){
+                Button("OK",role: .cancel){}
+            }
         }
     }
 }

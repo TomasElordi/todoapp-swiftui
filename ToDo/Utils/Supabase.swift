@@ -10,8 +10,7 @@ import Supabase
 
 class Supabase {
     
-    static let client = SupabaseClient(
-        supabaseURL: URL(string: Constants.apiURL)!,
-        supabaseKey: Constants.annonKey
-    )
+    static var userClient : SupabaseClient?
+    static let anonymousClient = SupabaseClient(supabaseURL: URL(string: Constants.apiURL)!, supabaseKey: Constants.annonKey)
+    
 }
